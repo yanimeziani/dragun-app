@@ -107,13 +107,7 @@ export default function ChatPage({ params }: { params: Promise<{ debtorId: strin
                 ? 'bg-primary text-base-content shadow-lg shadow-primary/20'
                 : 'bg-base-200 border border-base-300 text-base-content shadow-xl'
             }`}>
-              {m.parts && Array.isArray(m.parts) ? (
-                m.parts.map((part, i) => (
-                  part.type === 'text' ? <span key={i}>{part.text}</span> : null
-                ))
-              ) : (
-                m.content
-              )}
+              {m.content}
             </div>
             <div className="chat-footer opacity-30 text-[9px] mt-1 uppercase tracking-tighter">
               {m.role === 'user' ? t('sent') : t('dragunAI')}

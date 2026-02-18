@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages, Message } from 'ai';
+import { streamText, convertToModelMessages } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import * as Sentry from '@sentry/nextjs';
 import { generateEmbedding, getChatModel } from '@/lib/ai-provider';
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       return new Response('Invalid messages', { status: 400 });
     }
 
-    const convertedMessages = convertToModelMessages(messages);
+    const convertedMessages = await convertToModelMessages(messages);
     const lastUserMessage = convertedMessages[convertedMessages.length - 1];
     let lastMessageText = '';
     
@@ -135,7 +135,7 @@ export async function POST(req: Request) {
       }
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('[/api/chat]', error);
     Sentry.captureException(error);
