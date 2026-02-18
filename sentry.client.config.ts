@@ -9,4 +9,8 @@ Sentry.init({
   integrations: [
     Sentry.replayIntegration(),
   ],
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+  // Enable sending user PII (Personally Identifiable Information)
+  sendDefaultPii: true,
 });
