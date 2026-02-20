@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import MobileBottomBar from '@/components/dashboard/MobileBottomBar';
 import DashboardTopNav from '@/components/dashboard/DashboardTopNav';
 import { getMerchantId } from '@/lib/auth';
+import { createStripeConnectAccount } from '@/app/actions/stripe-connect';
 import {
   Settings,
   FileText,
@@ -16,7 +17,11 @@ import {
   CheckCircle2,
   Users,
   BadgeDollarSign,
-  Plus
+  Plus,
+  ArrowUpRight,
+  ShieldCheck,
+  AlertCircle,
+  ArrowRight
 } from 'lucide-react';
 
 export default async function DashboardPage() {
@@ -35,15 +40,21 @@ export default async function DashboardPage() {
 
   if (merchantError || !merchant) {
     return (
-      <div className="p-10 bg-base-100 min-h-screen text-base-content flex flex-col items-center justify-center space-y-4">
-        <div className="text-4xl">⚠️</div>
-        <h1 className="text-xl font-bold text-center">{t('notFound')}</h1>
-        <p className="text-base-content/50 text-sm max-w-xs text-center">
-          {t('notFoundHint')} <code className="bg-base-300 px-1 rounded">seed.sql</code>
-        </p>
+      <div className="p-10 bg-[#050505] min-h-screen text-white flex flex-col items-center justify-center space-y-6">
+        <div className="w-20 h-20 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-2xl">
+          <ShieldCheck className="w-10 h-10 text-[#D4AF37]" />
+        </div>
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-black uppercase tracking-widest">{t('notFound')}</h1>
+          <p className="text-white/40 text-sm font-medium">
+            {t('notFoundHint')} <code className="bg-white/5 px-2 py-0.5 rounded text-[#D4AF37]">seed.sql</code>
+          </p>
+        </div>
       </div>
     );
   }
+
+  const hasStripe = !!merchant.stripe_account_id;
 
   const { data: contract } = await supabaseAdmin
     .from('contracts')
@@ -72,9 +83,11 @@ export default async function DashboardPage() {
 
   async function handleUpdateSettings(formData: FormData) {
     'use server';
+    const name = formData.get('name') as string;
     const strictness = parseInt(formData.get('strictness') as string);
     const settlement = parseFloat(formData.get('settlement') as string) / 100;
     await updateMerchantSettings({
+      name,
       strictness_level: strictness,
       settlement_floor: settlement,
     });
@@ -85,127 +98,139 @@ export default async function DashboardPage() {
   const totalRecovered = debtors?.reduce((acc, d) => acc + (d.status === 'paid' ? d.total_debt : 0), 0) || 0;
 
   return (
-    <div id="top" className="bg-base-100 min-h-screen text-base-content selection:bg-primary selection:text-primary-content pb-20 md:pb-10">
+    <div id="top" className="bg-[#050505] min-h-screen text-white selection:bg-[#D4AF37] selection:text-black pb-24 md:pb-12 relative overflow-x-hidden">
+      {/* Premium Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#D4AF37]/5 to-transparent pointer-events-none" />
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#6419E6]/5 blur-[120px] rounded-full pointer-events-none" />
+
       {/* Top Nav */}
-      <nav className="border-b border-base-300 bg-base-100/50 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-base-content shadow-[0_0_15px_rgba(59,130,246,0.5)] text-xs transition-transform group-hover:scale-110">🐲</div>
-            <h1 className="text-lg md:text-xl font-bold tracking-tight">{t('dragun')}</h1>
+      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center font-bold text-[#D4AF37] shadow-2xl relative transition-all group-hover:scale-110 group-hover:border-[#D4AF37]/30">
+               <div className="absolute inset-0 bg-[#D4AF37]/10 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+               <span className="relative z-10 text-xs font-black">DRGN</span>
+            </div>
+            <h1 className="text-xl font-black tracking-[0.15em] uppercase hidden sm:block">DRAGUN<span className="text-[#D4AF37]">.</span></h1>
           </Link>
-          <DashboardTopNav merchantName={merchant.name} />
+          <DashboardTopNav merchantName={merchant.name} hasStripe={hasStripe} />
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-10">
+      <main className="max-w-7xl mx-auto px-6 py-12 space-y-16 relative z-10">
+        {/* Stripe Onboarding Alert */}
+        {!hasStripe && (
+          <div className="relative group p-[1px] rounded-[2rem] overflow-hidden bg-gradient-to-br from-amber-500/50 to-transparent">
+             <div className="bg-[#0a0a0a] rounded-[2rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+              <div className="flex items-start gap-6">
+                <div className="p-4 bg-amber-500/10 rounded-2xl text-amber-500 animate-pulse border border-amber-500/20">
+                  <AlertCircle className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">Activate Gateway</h3>
+                  <p className="text-white/40 text-sm font-medium max-w-md leading-relaxed">Connect your Stripe account to enable Meziani AI to recover funds directly into your balance. A 5% platform fee applies to all recovered debts.</p>
+                </div>
+              </div>
+              <form action={createStripeConnectAccount}>
+                <button className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-black text-xs px-10 py-5 rounded-2xl transition-all shadow-2xl uppercase tracking-widest flex items-center justify-center group/btn">
+                  Setup Stripe Connect
+                  <ArrowRight className="w-4 h-4 ml-3 group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl md:text-3xl font-bold text-base-content tracking-tight">{t('title')}</h2>
-          <p className="text-base-content/60 text-sm">{t('subtitle')}</p>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-[#D4AF37] mb-2">
+             <div className="h-px w-8 bg-[#D4AF37]/50" />
+             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{t('overview')}</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{t('title')}</h2>
+          <p className="text-white/40 text-sm font-medium max-w-lg">{t('subtitle')}</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-          <div className="card bg-base-200/40 border border-base-300/50 shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-1 h-full bg-primary/60"></div>
-            <div className="card-body p-4 md:p-6">
-              <div className="flex items-center gap-2 text-base-content/50 mb-1">
-                <BadgeDollarSign className="w-3 h-3" />
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('outstanding')}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: t('outstanding'), value: `$${totalOutstanding.toLocaleString()}`, icon: BadgeDollarSign, trend: '+4.5%', sub: t('momChange'), color: '#D4AF37' },
+            { label: t('recovered'), value: `$${totalRecovered.toLocaleString()}`, icon: TrendingUp, trend: '+12%', sub: t('vsAvg'), color: '#10b981' },
+            { label: t('activeChats'), value: debtors?.length || 0, icon: MessageSquare, trend: '87%', sub: t('replyRate'), color: '#6419E6' },
+            { label: t('avgSettle'), value: '82%', icon: CheckCircle2, trend: `MIN ${Math.round(merchant.settlement_floor * 100)}%`, sub: 'EFFICIENCY', color: '#3abff8' }
+          ].map((stat, i) => (
+            <div key={i} className="group relative bg-white/[0.03] border border-white/5 rounded-[2rem] p-8 shadow-2xl overflow-hidden hover:bg-white/[0.05] transition-all">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <stat.icon className="w-16 h-16" style={{ color: stat.color }} />
               </div>
-              <h3 className="text-xl md:text-3xl font-bold text-base-content">${totalOutstanding.toLocaleString()}</h3>
-              <div className="flex items-center gap-1 text-[10px] md:text-xs text-error mt-2">
-                <span className="font-bold">↑ 4.5%</span>
-                <span className="opacity-40">{t('momChange')}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="card bg-base-200/40 border border-base-300/50 shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-1 h-full bg-success/60"></div>
-            <div className="card-body p-4 md:p-6">
-              <div className="flex items-center gap-2 text-base-content/50 mb-1">
-                <TrendingUp className="w-3 h-3" />
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('recovered')}</p>
-              </div>
-              <h3 className="text-xl md:text-3xl font-bold text-base-content">${totalRecovered.toLocaleString()}</h3>
-              <div className="flex items-center gap-1 text-[10px] md:text-xs text-success mt-2">
-                <span className="font-bold">↑ 12%</span>
-                <span className="opacity-40">{t('vsAvg')}</span>
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center gap-2 text-white/30">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em]">{stat.label}</p>
+                </div>
+                <h3 className="text-3xl font-black text-white tracking-tight">{stat.value}</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/60 tracking-widest">{stat.trend}</span>
+                  <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">{stat.sub}</span>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="card bg-base-200/40 border border-base-300/50 shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-1 h-full bg-accent/60"></div>
-            <div className="card-body p-4 md:p-6">
-              <div className="flex items-center gap-2 text-base-content/50 mb-1">
-                <MessageSquare className="w-3 h-3" />
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('activeChats')}</p>
-              </div>
-              <h3 className="text-xl md:text-3xl font-bold text-base-content">{debtors?.length || 0}</h3>
-              <div className="flex items-center gap-1 text-[10px] md:text-xs text-base-content/60 mt-2">
-                <span className="font-bold">87%</span>
-                <span className="opacity-40">{t('replyRate')}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="card bg-base-200/40 border border-base-300/50 shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-1 h-full bg-purple-500/60"></div>
-            <div className="card-body p-4 md:p-6">
-              <div className="flex items-center gap-2 text-base-content/50 mb-1">
-                <CheckCircle2 className="w-3 h-3" />
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('avgSettle')}</p>
-              </div>
-              <h3 className="text-xl md:text-3xl font-bold text-base-content">82%</h3>
-              <div className="flex items-center gap-1 text-[10px] md:text-xs text-base-content/60 mt-2">
-                <span className="font-bold">{t('min')} {Math.round(merchant.settlement_floor * 100)}%</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Config & Pipeline */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Controls */}
-          <div className="lg:col-span-4 space-y-6 md:space-y-8 order-2 lg:order-1">
+          <div className="lg:col-span-4 space-y-12">
             {/* Agent Control */}
-            <div id="settings" className="card bg-base-100 border border-base-300/60 shadow-xl">
-              <div className="card-body p-5 md:p-7">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                    <Settings className="w-4 h-4" />
+            <div id="settings" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl relative group">
+              <div className="p-8 space-y-10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/20">
+                      <Settings className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-lg font-black uppercase tracking-widest text-white">{t('agentParams')}</h2>
                   </div>
-                  <h2 className="text-lg font-bold text-base-content">{t('agentParams')}</h2>
                 </div>
 
-                <form action={handleUpdateSettings} className="space-y-8">
-                  <div className="form-control">
-                    <div className="flex justify-between items-end mb-3">
-                      <label className="text-sm text-base-content/60 font-medium">{t('strictnessLabel')}</label>
-                      <span className="text-lg font-bold text-primary">{merchant.strictness_level}<span className="text-xs opacity-40 ml-0.5">/10</span></span>
+                <form action={handleUpdateSettings} className="space-y-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold">Business Name (Statement Descriptor)</label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      defaultValue={merchant.name} 
+                      placeholder="e.g. Venice Gym"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:border-[#D4AF37] focus:outline-none transition-all"
+                    />
+                    <p className="text-[9px] text-white/20 font-medium">This name will appear on the debtor's bank statement.</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-end">
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold">{t('strictnessLabel')}</label>
+                      <span className="text-2xl font-black text-[#D4AF37]">{merchant.strictness_level}<span className="text-xs opacity-20 ml-1">/10</span></span>
                     </div>
-                    <input type="range" name="strictness" min="1" max="10" defaultValue={merchant.strictness_level} className="range range-primary range-xs" />
-                    <div className="flex justify-between text-[10px] uppercase tracking-wider font-bold opacity-30 mt-3">
+                    <input type="range" name="strictness" min="1" max="10" defaultValue={merchant.strictness_level} className="range range-xs appearance-none bg-white/5 h-1.5 rounded-full accent-[#D4AF37] cursor-pointer" />
+                    <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-white/20">
                       <span>{t('empathetic')}</span>
                       <span>{t('legalistic')}</span>
                     </div>
                   </div>
 
-                  <div className="form-control">
-                    <div className="flex justify-between items-end mb-3">
-                      <label className="text-sm text-base-content/60 font-medium">{t('settlementFloor')}</label>
-                      <span className="text-lg font-bold text-accent">{Math.round(merchant.settlement_floor * 100)}%</span>
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-end">
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold">{t('settlementFloor')}</label>
+                      <span className="text-2xl font-black text-white">{Math.round(merchant.settlement_floor * 100)}<span className="text-xs opacity-20 ml-1">%</span></span>
                     </div>
-                    <input type="range" name="settlement" min="50" max="100" defaultValue={merchant.settlement_floor * 100} className="range range-accent range-xs" />
-                    <div className="flex justify-between text-[10px] uppercase tracking-wider font-bold opacity-30 mt-3">
+                    <input type="range" name="settlement" min="50" max="100" defaultValue={merchant.settlement_floor * 100} className="range range-xs appearance-none bg-white/5 h-1.5 rounded-full accent-white cursor-pointer" />
+                    <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-white/20">
                       <span>{t('flexible')}</span>
                       <span>{t('fixed')}</span>
                     </div>
                   </div>
 
-                  <button className="btn btn-primary w-full shadow-lg shadow-primary/10 border-none h-11">
+                  <button className="w-full bg-white text-black hover:bg-[#D4AF37] hover:text-black font-black text-xs py-4 rounded-2xl transition-all active:scale-[0.98] shadow-xl uppercase tracking-[0.2em]">
                     {t('applyUpdates')}
                   </button>
                 </form>
@@ -213,30 +238,41 @@ export default async function DashboardPage() {
             </div>
 
             {/* Knowledge Base */}
-            <div id="knowledge" className="card bg-base-100 border border-base-300/60 shadow-xl">
-              <div className="card-body p-5 md:p-7">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
-                      <FileText className="w-4 h-4" />
+            <div id="knowledge" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl relative group">
+              <div className="p-8 space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/40 border border-white/10">
+                      <FileText className="w-5 h-5" />
                     </div>
-                    <h2 className="text-lg font-bold text-base-content">{t('ragContext')}</h2>
+                    <h2 className="text-lg font-black uppercase tracking-widest text-white">{t('ragContext')}</h2>
                   </div>
-                  {contract && <div className="badge badge-success badge-xs py-2 px-2 font-bold opacity-80">{t('active')}</div>}
+                  {contract && (
+                    <div className="px-3 py-1 rounded-full bg-[#10b981]/10 border border-[#10b981]/20 text-[#10b981] text-[9px] font-black tracking-widest uppercase">
+                      {t('active')}
+                    </div>
+                  )}
                 </div>
 
-                <form action={handleUpload} className="space-y-4">
+                <form action={handleUpload} className="space-y-5">
                   <div className="relative group">
-                    <input type="file" name="contract" accept=".pdf" className="file-input file-input-bordered file-input-sm w-full bg-base-200/50 border-base-300 focus:border-primary/50 text-xs" />
+                    <input type="file" name="contract" accept=".pdf" className="hidden" id="contract-upload" />
+                    <label htmlFor="contract-upload" className="w-full h-32 border-2 border-dashed border-white/10 rounded-[1.5rem] flex flex-col items-center justify-center gap-3 hover:border-[#D4AF37]/50 hover:bg-white/[0.02] transition-all cursor-pointer group/label">
+                       <Plus className="w-6 h-6 text-white/20 group-hover/label:text-[#D4AF37] transition-colors" />
+                       <span className="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover/label:text-white transition-colors">{t('replacePDF')}</span>
+                    </label>
                   </div>
-                  <button className="btn btn-outline btn-sm w-full border-base-300 hover:bg-base-300 hover:border-base-content/20 text-[11px] uppercase tracking-widest font-bold h-10">
-                    {t('replacePDF')}
+                  <button className="w-full bg-transparent border border-white/10 text-white/60 hover:text-white hover:border-white font-black text-[10px] py-4 rounded-2xl transition-all uppercase tracking-[0.2em]">
+                    EXECUTE INDEXING
                   </button>
                 </form>
                 {contract && (
-                  <div className="bg-base-200/80 rounded-lg p-3 mt-4 border border-base-300/50">
-                    <p className="text-[10px] text-base-content/50 uppercase font-bold tracking-tighter mb-1">{t('currentFile')}</p>
-                    <p className="text-[11px] text-base-content/80 truncate font-mono">{contract.file_name}</p>
+                  <div className="bg-black/40 rounded-2xl p-4 border border-white/5">
+                    <p className="text-[9px] text-white/20 uppercase font-black tracking-widest mb-1">{t('currentFile')}</p>
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-3 h-3 text-[#D4AF37]" />
+                      <p className="text-[11px] text-white/60 truncate font-bold font-mono uppercase tracking-tighter">{contract.file_name}</p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -244,84 +280,93 @@ export default async function DashboardPage() {
           </div>
 
           {/* Pipeline */}
-          <div id="debtors" className="lg:col-span-8 order-1 lg:order-2">
-            <div className="card bg-base-100 border border-base-300/60 shadow-xl h-full overflow-hidden">
-              <div className="card-body p-0">
-                <div className="p-5 md:p-7 border-b border-base-300/60 flex justify-between items-center bg-base-200/20">
+          <div id="debtors" className="lg:col-span-8">
+            <div className="bg-white/[0.02] border border-white/5 rounded-[3rem] overflow-hidden shadow-2xl min-h-[600px] flex flex-col">
+              <div className="p-8 md:p-10 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white/[0.01]">
+                <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+                    <div className="w-10 h-10 bg-[#6419E6]/10 rounded-xl flex items-center justify-center text-[#6419E6] border border-[#6419E6]/20">
                       <Users className="w-5 h-5" />
                     </div>
-                    <h2 className="text-lg md:text-xl font-bold text-base-content tracking-tight">{t('activeRecoveries')}</h2>
+                    <h2 className="text-2xl font-black text-white tracking-tight uppercase">{t('activeRecoveries')}</h2>
                   </div>
-                  <div className="flex gap-2">
-                    <button className="btn btn-ghost btn-xs text-base-content/50 hover:text-base-content">{t('filter')}</button>
-                  </div>
+                  <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] ml-13">SECURE PROTOCOL ACTIVE</p>
                 </div>
-
-                <div className="overflow-x-auto">
-                  <table className="table table-zebra w-full text-base-content/80 border-separate border-spacing-0">
-                    <thead>
-                      <tr className="bg-base-100">
-                        <th className="bg-transparent text-base-content/50 uppercase text-[10px] tracking-widest py-4 pl-7 border-b border-base-300">{t('debtorDetails')}</th>
-                        <th className="bg-transparent text-base-content/50 uppercase text-[10px] tracking-widest py-4 border-b border-base-300 hidden sm:table-cell">{t('exposure')}</th>
-                        <th className="bg-transparent text-base-content/50 uppercase text-[10px] tracking-widest py-4 border-b border-base-300">{t('agentStatus')}</th>
-                        <th className="bg-transparent text-base-content/50 uppercase text-[10px] tracking-widest py-4 pr-7 text-right border-b border-base-300">{t('protocol')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {debtors?.map(d => (
-                        <tr key={d.id} className="group hover:bg-base-200/40 transition-all border-base-300/50">
-                          <td className="py-4 pl-7 border-b border-base-300/40">
-                            <div className="flex items-center gap-3 md:gap-4">
-                              <div className="avatar placeholder ring-1 ring-base-300 rounded-lg p-0.5">
-                                <div className="bg-base-200 text-base-content/50 rounded-lg w-10 md:w-12 h-10 md:h-12 shadow-inner">
-                                  <span className="text-xs md:text-sm font-bold">{d.name[0]}</span>
-                                </div>
-                              </div>
-                              <div className="space-y-0.5">
-                                <div className="font-bold text-base-content text-xs md:text-sm tracking-tight">{d.name}</div>
-                                <div className="text-[10px] md:text-xs text-base-content/50 font-medium">{d.email}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-4 border-b border-base-300/40 hidden sm:table-cell">
-                            <div className="font-bold text-sm text-base-content">{d.currency} {d.total_debt.toLocaleString()}</div>
-                            <div className="text-[10px] text-base-content/50 font-medium">{t('daysPastDue')}</div>
-                          </td>
-                          <td className="py-4 border-b border-base-300/40">
-                            <div className={`badge badge-sm py-2.5 px-3 border-none text-[9px] md:text-[10px] font-black uppercase tracking-tighter ${
-                              d.status === 'pending' ? 'bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 ring-1 ring-emerald-500/20'
-                            }`}>
-                              {d.status === 'pending' ? t('negotiating') : t('settled')}
-                            </div>
-                          </td>
-                          <td className="py-4 pr-7 text-right border-b border-base-300/40">
-                            <Link
-                              href={`/chat/${d.id}`}
-                              className="btn btn-primary btn-outline btn-xs md:btn-sm h-8 md:h-9 rounded-lg px-3 md:px-5 hover:bg-primary hover:text-base-content transition-all text-[10px] md:text-xs font-bold uppercase tracking-widest border-base-300"
-                            >
-                              {t('joinAI')}
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="flex gap-4 w-full sm:w-auto">
+                  <button className="flex-1 sm:flex-none px-6 py-3 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/60 hover:bg-white/10 transition-all">{t('filter')}</button>
                 </div>
-
-                {debtors?.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-20 px-6 text-center space-y-4">
-                    <div className="p-4 bg-base-200 rounded-full text-base-content/40">
-                      <Plus className="w-8 h-8" />
-                    </div>
-                    <div>
-                      <p className="text-base-content font-bold">{t('noRecoveries')}</p>
-                      <p className="text-base-content/50 text-sm mt-1">{t('noRecoveriesHint')}</p>
-                    </div>
-                  </div>
-                )}
               </div>
+
+              <div className="overflow-x-auto flex-1">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/5">
+                      <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">{t('debtorDetails')}</th>
+                      <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hidden md:table-cell">{t('exposure')}</th>
+                      <th className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">{t('agentStatus')}</th>
+                      <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 text-right">{t('protocol')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.03]">
+                    {debtors?.map(d => (
+                      <tr key={d.id} className="group hover:bg-white/[0.02] transition-all">
+                        <td className="px-10 py-8">
+                          <div className="flex items-center gap-5">
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-white/10 blur-md rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <div className="w-14 h-14 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
+                                <span className="text-sm font-black text-[#D4AF37]">{d.name[0].toUpperCase()}</span>
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#10b981] border-2 border-[#0a0a0a] rounded-full" />
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="font-black text-white text-sm uppercase tracking-wider group-hover:text-[#D4AF37] transition-colors">{d.name}</div>
+                              <div className="text-[10px] text-white/30 font-bold uppercase tracking-widest">{d.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-8 hidden md:table-cell">
+                          <div className="font-black text-base text-white tracking-tight">{d.currency} {d.total_debt.toLocaleString()}</div>
+                          <div className="text-[9px] text-[#F87272] font-black uppercase tracking-widest mt-1">{t('daysPastDue').toUpperCase()}</div>
+                        </td>
+                        <td className="px-6 py-8">
+                          <div className={`inline-flex items-center px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                            d.status === 'pending' 
+                              ? 'bg-[#FBBD23]/5 border-[#FBBD23]/20 text-[#FBBD23]' 
+                              : 'bg-[#10b981]/5 border-[#10b981]/20 text-[#10b981]'
+                          }`}>
+                            <div className={`w-1 h-1 rounded-full mr-2 animate-pulse ${d.status === 'pending' ? 'bg-[#FBBD23]' : 'bg-[#10b981]'}`} />
+                            {d.status === 'pending' ? t('negotiating') : t('settled')}
+                          </div>
+                        </td>
+                        <td className="px-10 py-8 text-right">
+                          <Link
+                            href={`/chat/${d.id}`}
+                            className="inline-flex items-center gap-2 group/btn"
+                          >
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 group-hover/btn:text-white transition-colors">{t('joinAI')}</span>
+                            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20 group-hover/btn:bg-[#D4AF37] group-hover/btn:text-black group-hover/btn:border-[#D4AF37] transition-all">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </div>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {debtors?.length === 0 && (
+                <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6">
+                  <div className="w-20 h-20 rounded-full bg-white/[0.02] border border-dashed border-white/10 flex items-center justify-center text-white/10">
+                    <Plus className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-white font-black uppercase tracking-widest">{t('noRecoveries')}</p>
+                    <p className="text-white/20 text-[10px] font-bold uppercase tracking-[0.2em] max-w-[240px] mx-auto">{t('noRecoveriesHint')}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -329,6 +374,11 @@ export default async function DashboardPage() {
 
       {/* Mobile Action Bar */}
       <MobileBottomBar addDebtorAction={handleAddDebtor} />
+
+      {/* Luxury Brand Decoration */}
+      <div className="fixed bottom-8 right-8 pointer-events-none opacity-20 hidden lg:block">
+         <p className="text-[10px] font-black uppercase tracking-[0.5em] vertical-text text-white">WORLD CLASS RECOVERY • EST 2026</p>
+      </div>
     </div>
   );
 }

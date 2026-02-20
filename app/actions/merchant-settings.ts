@@ -3,7 +3,11 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { getMerchantId } from '@/lib/auth';
 
-export async function updateMerchantSettings(settings: { strictness_level: number, settlement_floor: number }) {
+export async function updateMerchantSettings(settings: { 
+  name?: string, 
+  strictness_level?: number, 
+  settlement_floor?: number 
+}) {
   const merchantId = await getMerchantId();
   if (!merchantId) throw new Error('Unauthorized');
 

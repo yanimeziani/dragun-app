@@ -1,101 +1,121 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { ArrowRight, Bot, ShieldCheck, Zap, BarChart3, Globe } from 'lucide-react';
+import { ArrowRight, Bot, ShieldCheck, Zap, BarChart3, Globe, Sparkles, ChevronRight, Lock } from 'lucide-react';
 
 export default function LandingPage() {
   const t = useTranslations('Home');
 
   return (
-    <div className="relative isolate overflow-hidden">
-      {/* Mesh Gradient Background */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full"></div>
+    <div className="relative isolate overflow-hidden bg-[#050505]">
+      {/* Premium Ambient Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#D4AF37]/5 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#6419E6]/10 blur-[120px] rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]"></div>
       </div>
 
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-32 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-base-300 bg-base-200/50 backdrop-blur-md text-base-content/80 text-[10px] font-bold tracking-widest uppercase mb-8">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-          </span>
+      <main className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-40 md:pb-40 flex flex-col items-center text-center relative z-10">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.03] backdrop-blur-xl text-white/40 text-[10px] font-black tracking-[0.3em] uppercase mb-12 animate-in fade-in slide-in-from-top-4 duration-1000">
+          <Sparkles className="w-3 h-3 text-[#D4AF37]" />
           {t('badge')}
         </div>
 
-        <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.9] mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500">
-          {t('heroLine1')} <br />
-          <span className="italic font-serif">{t('heroLine2')}</span>
+        <h1 className="text-6xl md:text-[120px] font-black tracking-[-0.04em] leading-[0.85] mb-12 text-white uppercase group">
+          <span className="block">{t('heroLine1')}</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-white to-[#D4AF37] bg-[length:200%_auto] animate-gradient-x italic font-serif tracking-tight lowercase mt-2">
+            {t('heroLine2')}
+          </span>
         </h1>
 
-        <p className="text-base md:text-xl text-base-content/60 max-w-xl mx-auto leading-relaxed mb-10">
+        <p className="text-base md:text-xl text-white/40 max-w-2xl mx-auto leading-relaxed mb-16 font-medium tracking-tight">
           {t('heroParagraph')}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <Link href="/dashboard" className="btn btn-primary h-14 px-8 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] text-base group">
+        <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+          <Link href="/dashboard" className="h-16 px-12 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-[#D4AF37] transition-all active:scale-95 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group">
             {t('launchAgent')}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <Link href="/about" className="btn btn-ghost h-14 px-8 rounded-2xl border border-base-300 bg-base-200/30 backdrop-blur-sm text-base">
+          <Link href="/about" className="h-16 px-12 rounded-2xl bg-white/[0.03] border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center hover:bg-white/[0.08] transition-all active:scale-95">
             {t('howItWorks')}
           </Link>
         </div>
 
         {/* Bento Grid Preview */}
-        <div className="mt-24 grid grid-cols-1 md:grid-cols-12 gap-4 w-full max-w-6xl">
+        <div className="mt-40 grid grid-cols-1 md:grid-cols-12 gap-8 w-full max-w-6xl relative">
+          <div className="absolute -inset-4 bg-[#D4AF37]/5 blur-[100px] rounded-full pointer-events-none opacity-50"></div>
+          
           {/* Main Agent Interface */}
-          <div className="md:col-span-8 group relative rounded-3xl border border-base-300 bg-base-100/50 backdrop-blur-xl p-1 overflow-hidden transition-all hover:border-primary/50">
-            <div className="bg-base-200/50 rounded-[1.4rem] p-6 h-[400px] flex flex-col">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-base-content shadow-lg shadow-primary/20">🐲</div>
+          <div className="md:col-span-8 group relative rounded-[3rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl p-1 overflow-hidden transition-all hover:border-[#D4AF37]/30 shadow-2xl">
+            <div className="bg-white/[0.02] rounded-[2.8rem] p-8 md:p-10 h-[500px] flex flex-col">
+              <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-2xl flex items-center justify-center text-[#D4AF37] shadow-2xl relative">
+                    <div className="absolute inset-0 bg-[#D4AF37]/10 blur-lg" />
+                    <span className="relative z-10 text-[10px] font-black">DRGN</span>
+                  </div>
                   <div>
-                    <div className="text-sm font-bold text-base-content uppercase tracking-tighter">{t('agentName')}</div>
-                    <div className="text-[10px] text-success font-medium flex items-center gap-1">
-                      <div className="w-1 h-1 bg-success rounded-full"></div> {t('agentStatus')}
+                    <div className="text-xs font-black text-white uppercase tracking-[0.2em]">{t('agentName')}</div>
+                    <div className="text-[9px] text-[#10b981] font-black flex items-center gap-1.5 uppercase tracking-widest mt-1">
+                      <div className="w-1.5 h-1.5 bg-[#10b981] rounded-full animate-pulse"></div> {t('agentStatus')}
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 rounded-full bg-base-300"></div>
-                  <div className="w-2 h-2 rounded-full bg-base-300"></div>
+                <div className="flex gap-2">
+                   <div className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[9px] font-black text-white/20 uppercase tracking-widest">ENCRYPTED</div>
                 </div>
               </div>
 
-              <div className="space-y-4 flex-1 overflow-hidden">
-                <div className="chat chat-start">
-                  <div className="chat-bubble bg-base-300/50 border border-base-300 text-xs">{t('chatBubble1')}</div>
+              <div className="space-y-6 flex-1 overflow-hidden">
+                <div className="flex justify-start">
+                   <div className="max-w-[80%] bg-white/[0.05] border border-white/5 p-4 rounded-2xl rounded-tl-none text-xs text-white/60 leading-relaxed font-medium">
+                     {t('chatBubble1')}
+                   </div>
                 </div>
-                <div className="chat chat-end animate-pulse">
-                  <div className="chat-bubble bg-primary text-xs shadow-lg shadow-primary/20">{t('chatBubble2')}</div>
+                <div className="flex justify-end">
+                   <div className="max-w-[80%] bg-white text-black p-4 rounded-2xl rounded-tr-none text-xs font-bold shadow-2xl">
+                     {t('chatBubble2')}
+                   </div>
                 </div>
-                <div className="chat chat-start">
-                  <div className="chat-bubble bg-base-300/50 border border-base-300 text-xs">{t('chatBubble3')}</div>
+                <div className="flex justify-start">
+                   <div className="max-w-[80%] bg-white/[0.05] border border-white/5 p-4 rounded-2xl rounded-tl-none text-xs text-white/60 leading-relaxed font-medium">
+                     {t('chatBubble3')}
+                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 flex gap-2">
-                <div className="h-8 flex-1 bg-base-300/50 rounded-lg border border-base-300"></div>
-                <div className="h-8 w-8 bg-primary rounded-lg"></div>
+              <div className="mt-8 flex gap-3">
+                <div className="h-12 flex-1 bg-white/[0.03] rounded-xl border border-white/5 px-4 flex items-center text-white/10 text-xs font-bold uppercase tracking-widest">
+                  Secure messaging protocol...
+                </div>
+                <div className="h-12 w-12 bg-[#D4AF37] rounded-xl flex items-center justify-center text-black">
+                   <ArrowRight className="w-5 h-5" />
+                </div>
               </div>
             </div>
           </div>
 
           {/* Side Stats */}
-          <div className="md:col-span-4 grid grid-cols-1 gap-4">
-            <div className="rounded-3xl border border-base-300 bg-base-200/40 p-6 flex flex-col justify-between group hover:bg-base-200/60 transition-colors">
-              <Zap className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-              <div>
-                <div className="text-3xl font-black text-base-content">82%</div>
-                <div className="text-xs text-base-content/50 font-bold uppercase tracking-widest">{t('recoveryRateLabel')}</div>
+          <div className="md:col-span-4 grid grid-cols-1 gap-8">
+            <div className="rounded-[3rem] border border-white/5 bg-white/[0.02] p-10 flex flex-col justify-between group hover:bg-white/[0.05] transition-all hover:border-[#D4AF37]/20 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Zap className="w-20 h-20 text-[#D4AF37]" />
+              </div>
+              <Zap className="w-10 h-10 text-[#D4AF37] mb-6 relative z-10" />
+              <div className="relative z-10">
+                <div className="text-5xl font-black text-white tracking-tighter mb-1">82%</div>
+                <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em]">{t('recoveryRateLabel')}</div>
               </div>
             </div>
-            <div className="rounded-3xl border border-base-300 bg-base-200/40 p-6 flex flex-col justify-between group hover:bg-base-200/60 transition-colors">
-              <Bot className="w-8 h-8 text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
-              <div>
-                <div className="text-3xl font-black text-base-content">2.1s</div>
-                <div className="text-xs text-base-content/50 font-bold uppercase tracking-widest">{t('latencyLabel')}</div>
+            <div className="rounded-[3rem] border border-white/5 bg-white/[0.02] p-10 flex flex-col justify-between group hover:bg-white/[0.05] transition-all hover:border-[#6419E6]/20 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Bot className="w-20 h-20 text-[#6419E6]" />
+              </div>
+              <Bot className="w-10 h-10 text-[#6419E6] mb-6 relative z-10" />
+              <div className="relative z-10">
+                <div className="text-5xl font-black text-white tracking-tighter mb-1">2.1s</div>
+                <div className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em]">{t('latencyLabel')}</div>
               </div>
             </div>
           </div>
@@ -103,51 +123,55 @@ export default function LandingPage() {
       </main>
 
       {/* Features Section */}
-      <section className="py-24 border-t border-base-200">
+      <section className="py-40 border-t border-white/5 relative">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-blue-500" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-24">
+            {[
+              { icon: ShieldCheck, title: t('legalTitle'), desc: t('legalDesc'), color: '#D4AF37' },
+              { icon: Globe, title: t('stripeTitle'), desc: t('stripeDesc'), color: '#6419E6' },
+              { icon: BarChart3, title: t('knowledgeTitle'), desc: t('knowledgeDesc'), color: '#3abff8' }
+            ].map((feature, i) => (
+              <div key={i} className="space-y-8 group">
+                <div className="w-16 h-16 rounded-[2rem] bg-white/[0.03] border border-white/5 flex items-center justify-center transition-all group-hover:scale-110 group-hover:border-white/20">
+                  <feature.icon className="w-7 h-7" style={{ color: feature.color }} />
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-black text-white uppercase tracking-widest">{feature.title}</h3>
+                  <p className="text-white/40 text-sm leading-relaxed font-medium">{feature.desc}</p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-base-content">{t('legalTitle')}</h3>
-              <p className="text-base-content/60 text-sm leading-relaxed">{t('legalDesc')}</p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
-                <Globe className="w-6 h-6 text-purple-500" />
-              </div>
-              <h3 className="text-xl font-bold text-base-content">{t('stripeTitle')}</h3>
-              <p className="text-base-content/60 text-sm leading-relaxed">{t('stripeDesc')}</p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold text-base-content">{t('knowledgeTitle')}</h3>
-              <p className="text-base-content/60 text-sm leading-relaxed">{t('knowledgeDesc')}</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6">
-        <div className="max-w-5xl mx-auto rounded-[3rem] bg-gradient-to-b from-primary to-blue-700 p-12 md:p-24 text-center space-y-8 relative overflow-hidden shadow-2xl shadow-primary/20">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full"></div>
-          <h2 className="text-4xl md:text-6xl font-black text-base-content tracking-tight leading-none">
-            {t('ctaTitle1')} <br /> {t('ctaTitle2')}
-          </h2>
-          <p className="text-primary-content/80 text-lg max-w-xl mx-auto">
-            {t('ctaSubtitle')}
-          </p>
-          <div className="pt-4">
-            <Link href="/dashboard" className="btn bg-white text-primary border-none hover:bg-base-200 h-16 px-12 rounded-2xl text-lg font-bold">
+      <section className="py-40 px-6 relative">
+        <div className="max-w-6xl mx-auto rounded-[4rem] bg-gradient-to-br from-[#1a1a1a] to-[#050505] border border-white/5 p-16 md:p-32 text-center space-y-12 relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
+          <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-[#D4AF37]/10 blur-[120px] rounded-full"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-[#6419E6]/10 blur-[120px] rounded-full"></div>
+          
+          <div className="space-y-6 relative z-10">
+            <h2 className="text-5xl md:text-8xl font-black text-white tracking-tight uppercase leading-none">
+              {t('ctaTitle1')} <br /> <span className="text-[#D4AF37]">{t('ctaTitle2')}</span>
+            </h2>
+            <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto font-medium tracking-tight">
+              {t('ctaSubtitle')}
+            </p>
+          </div>
+          
+          <div className="pt-8 relative z-10">
+            <Link href="/dashboard" className="h-20 px-16 rounded-2xl bg-white text-black hover:bg-[#D4AF37] hover:text-black transition-all active:scale-95 text-sm font-black uppercase tracking-[0.3em] inline-flex items-center shadow-2xl">
               {t('ctaButton')}
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Footer Decoration */}
+      <div className="py-20 text-center opacity-10">
+         <p className="text-[10px] font-black uppercase tracking-[1em] text-white">WORLD CLASS INFRASTRUCTURE • DRAGUN TECHNOLOGIES</p>
+      </div>
     </div>
   );
 }

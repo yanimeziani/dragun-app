@@ -29,9 +29,12 @@ export async function uploadContract(formData: FormData) {
 
     const uint8Array = new Uint8Array(arrayBuffer);
     const pdf = await getDocumentProxy(uint8Array);
-    const { text } = await extractText(pdf, { mergePages: true });
+    const result = await extractText(pdf, { mergePages: true });
     
-    const rawText = Array.isArray(text) ? text.join('\n') : text;
+    // extractText might return text as string or array depending on mergePages option and version
+    // But since mergePages: true is passed, it should return a string in newer versions, 
+    // or we handle the array case just to be safe.
+    const rawText = Array.isArray(result.text) ? result.text.join('\n') : result.text;
 
     if (!rawText || rawText.trim().length === 0) {
       throw new Error('Could not extract text from PDF.');
@@ -84,8 +87,9 @@ export async function uploadContract(formData: FormData) {
     if (embeddingsError) throw new Error(`Embeddings error: ${embeddingsError.message}`);
 
     return { success: true, contractId: contract.id };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload Error:', error);
-    return { success: false, error: error.message };
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: message };
   }
 }

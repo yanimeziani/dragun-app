@@ -1,8 +1,15 @@
-export async function getMerchantId() {
-  // In a real app, this would check Supabase Auth
-  // const supabase = createClient();
-  // const { data: { user } } = await supabase.auth.getUser();
-  // return user?.id;
+import { createClient } from '@/lib/supabase/server';
 
-  return '00000000-0000-0000-0000-000000000001';
+export async function getMerchantId() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    // In dev, you might want a fallback, but in prod we should probably return null or throw
+    // For now let's keep a fallback for development if needed, but the PRD implies we need real auth.
+    // Let's return the user id if it exists.
+    return null;
+  }
+
+  return user.id;
 }

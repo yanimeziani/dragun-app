@@ -4,7 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { use, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface Debtor {
   id: string;
@@ -22,6 +22,7 @@ export default function ChatPage({ params }: { params: Promise<{ debtorId: strin
   const t = useTranslations('Chat');
   const [debtor, setDebtor] = useState<Debtor | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
@@ -39,7 +40,7 @@ export default function ChatPage({ params }: { params: Promise<{ debtorId: strin
       setLoading(false);
     }
     fetchDebtor();
-  }, [debtorId]);
+  }, [debtorId, supabase]);
 
   if (loading) return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center">

@@ -10,9 +10,5 @@ export async function register() {
          // process.exit(1); // Don't crash the build step on Vercel if envs are missing there (e.g. during build)
       }
     }
-    await import('./sentry.server.config');
-  }
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./sentry.edge.config');
   }
 }

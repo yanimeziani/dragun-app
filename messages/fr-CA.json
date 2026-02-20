@@ -4,11 +4,13 @@
     "pricing": "Tarifs",
     "faq": "FAQ",
     "contact": "Contact",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter"
   },
   "Footer": {
     "tagline": "La référence en matière de recouvrement de créances moderne et empathique. L’IA agentique au service du règlement avec une intuition humaine.",
-    "copyright": "© 2027 Dragun Technologies Inc.",
+    "copyright": "© 2026 Meziani IA. Dragun.app est un produit de Meziani IA.",
     "platform": "Plateforme",
     "features": "Fonctionnalités",
     "pricing": "Tarifs",
@@ -25,7 +27,7 @@
     "heroParagraph": "Le premier agent IA qui négocie comme un humain, cite comme un avocat et règle comme un professionnel. Propulsé par Gemini 2.0 Flash pour une résolution en sous-seconde.",
     "launchAgent": "Lancer l’Agent",
     "howItWorks": "Comment ça marche",
-    "agentName": "Agent Dragun",
+    "agentName": "Meziani IA",
     "agentStatus": "Analyse du contrat...",
     "chatBubble1": "Je comprends que les temps peuvent être difficiles. Cependant, votre contrat signé le 12 jan. prévoit un préavis de 30 jours...",
     "chatBubble2": "Puis-je payer la moitié maintenant et l’autre moitié vendredi?",
@@ -124,22 +126,22 @@
   "About": {
     "title": "Notre",
     "titleHighlight": "Mission",
-    "paragraph": "Chez Dragun.app, nous croyons que le recouvrement de créances n’a pas à être une bataille. En combinant l’intelligence sub-seconde de Gemini 2.0 Flash avec une approche empathique et centrée sur l’humain, nous aidons les entreprises à récupérer leurs revenus perdus tout en préservant leurs relations clients.",
-    "speedTitle": "Conçu pour la Vitesse",
-    "speedDesc": "Nous exploitons les dernières fonctions Vercel Edge et Gemini 2.0 Flash pour que chaque interaction soit instantanée.",
+    "paragraph": "Chez Dragun.app, nous pensons que le recouvrement ne doit pas être une bataille. En tant que produit de Meziani IA, nous combinons l’intelligence sub-seconde avec une approche empathique.",
+    "speedTitle": "Propulsé par Meziani IA",
+    "speedDesc": "Nous exploitons le moteur spécialisé de Meziani IA pour garantir que chaque interaction soit instantanée.",
     "foundedTitle": "Fondé en 2026",
-    "foundedDesc": "Né à l’ère de l’IA agentique, Dragun est construit de fond en comble pour être plus qu’un simple chatbot—c’est un spécialiste."
+    "foundedDesc": "Meziani IA a créé Dragun.app pour être plus qu’un simple clavardage—c’est un agent de résolution."
   },
   "Legal": {
     "title": "Centre",
     "titleHighlight": "Juridique",
-    "subtitle": "Confiance, transparence et conformité.",
+    "subtitle": "Dernière mise à jour: 20 février 2026. Confiance, transparence et quête de conformité.",
     "privacyTitle": "Politique de Confidentialité",
-    "privacyContent": "Chez Dragun.app, nous prenons au sérieux vos données et celles de vos débiteurs. Toutes les données sont chiffrées au repos et en transit. Nous respectons les normes RGPD et CCPA.",
+    "privacyContent": "Chez Dragun.app, exploité par Meziani IA, nous protégeons vos données et celles de vos débiteurs. Nous collectons les informations minimales nécessaires au recouvrement. Bien que nous nous efforcions de respecter les normes internationales (RGPD/CCPA), nous améliorons constamment nos systèmes. Meziani IA agit comme sous-traitant des données.",
     "tosTitle": "Conditions d’Utilisation",
-    "tosContent": "En utilisant Dragun.app, vous acceptez les conditions suivantes. Nous fournissons une plateforme d’IA pour le recouvrement de créances. L’utilisation de la plateforme doit être dans les limites légales.",
-    "complianceTitle": "Conformité en Matière de Recouvrement",
-    "complianceContent": "Dragun est conçu pour suivre les règles standard de recouvrement de créances. Les utilisateurs sont responsables de s’assurer que la configuration de l’IA (niveau de sévérité) correspond aux exigences légales locales."
+    "tosContent": "En accédant à Dragun.app, vous acceptez les conditions de Meziani IA. Nous fournissons une interface de négociation par IA. Vous êtes responsable de l'exactitude des données. Meziani IA n'est pas un cabinet d'avocats et ne fournit pas de conseils juridiques.",
+    "complianceTitle": "Position Réglementaire",
+    "complianceContent": "Meziani IA conçoit Dragun.app dans le but de suivre les règles de recouvrement standard. Les marchands sont seuls responsables de s'assurer que leur configuration de l'IA est conforme aux lois locales de leur juridiction."
   },
   "Integrations": {
     "title": "Intégrations",
@@ -211,7 +213,7 @@
     "agentIntro": "Je suis ici pour vous aider à régler votre solde avec {merchant}.",
     "encrypted": "Chiffrement de Bout en Bout",
     "sent": "Envoyé",
-    "dragunAI": "Dragun IA",
+    "dragunAI": "Meziani IA",
     "chipPay": "Je paie maintenant",
     "chipFriday": "Me rappeler vendredi",
     "chipDispute": "Contester cette dette",
@@ -257,5 +259,18 @@
     "message": "Votre compte chez {merchant} a été fermé avec succès. Un courriel de confirmation sera envoyé à {email}.",
     "transactionId": "Identifiant de Transaction",
     "returnHome": "Retourner à l’Accueil"
+  },
+  "Auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "email": "Adresse courriel",
+    "password": "Mot de passe",
+    "signInWithEmail": "Se connecter par courriel",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "errorTitle": "Erreur d'authentification",
+    "successTitle": "Succès",
+    "magicLinkSent": "Un lien magique a été envoyé à votre adresse courriel.",
+    "checkEmail": "Consultez vos courriels pour obtenir le lien de connexion."
   }
 }

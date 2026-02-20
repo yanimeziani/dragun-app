@@ -1,6 +1,5 @@
 import { streamText, convertToModelMessages } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import * as Sentry from '@sentry/nextjs';
 import { generateEmbedding, getChatModel } from '@/lib/ai-provider';
 
 export const runtime = 'nodejs';
@@ -24,10 +23,10 @@ export async function POST(req: Request) {
     if (lastUserMessage.role === 'user') {
       if (typeof lastUserMessage.content === 'string') {
         lastMessageText = lastUserMessage.content;
-      } else {
+      } else if (Array.isArray(lastUserMessage.content)) {
         lastMessageText = lastUserMessage.content
           .filter(p => p.type === 'text')
-          .map(p => (p as any).text)
+          .map(p => (p as { type: 'text'; text: string }).text)
           .join('');
       }
     }
@@ -62,7 +61,6 @@ export async function POST(req: Request) {
     let context = '';
     if (contract) {
       // Create a search query based on the last message
-      // ideally we would rephrase the last message with history, but for speed we use raw text
       const queryEmbedding = await generateEmbedding(lastMessageText);
 
       const { data: matches, error: matchError } = await supabaseAdmin.rpc('match_contract_embeddings', {
@@ -74,48 +72,40 @@ export async function POST(req: Request) {
 
       if (matchError) {
           console.error('Vector search error:', matchError);
-      }
-
-      if (matches && matches.length > 0) {
+      } else if (matches && matches.length > 0) {
         context = (matches as Array<{ content: string }>).map((m) => m.content).join('\n---\n');
       }
     }
 
-    // 3. System Prompt
+    // 3. System Prompt (The Meziani AI Policy for Dragun.app)
     const systemPrompt = `
-    You are Dragun, a sophisticated, AI-driven debt recovery specialist.
-    You are currently representing ${merchant.name} to resolve an outstanding balance with ${debtor.name}.
+    You are Meziani AI, the expert recovery intelligence operating the Dragun.app platform.
+    You are representing ${merchant.name} to recover an outstanding balance via the Dragun.app settlement interface.
 
-    # DEBTOR DETAILS
-    Name: ${debtor.name}
-    Total Debt: ${debtor.currency} ${debtor.total_debt}
-    Status: ${debtor.status}
+    # OPERATIONAL HIERARCHY
+    - Platform: Dragun.app (Product)
+    - Operator: Meziani AI (Parent Company/Intelligence)
     
-    # MERCHANT SETTINGS
-    Strictness Level: ${merchant.strictness_level}/10
-    Settlement Floor: ${Math.round(merchant.settlement_floor * 100)}% (Do not offer below this without checking if they really can't pay).
+    # MEZIANI AI OPERATIONAL POLICY
+    1. IDENTITY: You are Meziani AI. You use the Dragun.app platform to facilitate resolution.
+    2. FIRM EMPATHY: If ${debtor.name} expresses hardship, acknowledge it ("I understand this is a difficult time") but pivot back to resolution ("We still need to address the balance per your agreement").
+    3. CONTRACTUAL AUTHORITY: You have access to the signed agreement. Use the provided context to cite specific clauses (e.g., "The contract signed on [Date] requires a 30-day notice").
+    4. SETTLEMENT LADDER: 
+       - Tier 1: Seek payment in full.
+       - Tier 2: Offer a 3-month installment plan.
+       - Tier 3: Offer a lump-sum settlement (Minimum: ${Math.round(merchant.settlement_floor * 100)}%).
+    5. COMPLIANCE: Do not threaten legal action you aren't authorized to take. Do not use aggressive or shaming language. 
 
-    # GOAL
-    Recover the debt while maintaining the professional reputation of ${merchant.name}. Use a "firm empathy" approach.
+    # DEBTOR PROFILE
+    Name: ${debtor.name}
+    Debt: ${debtor.currency} ${debtor.total_debt}
+    Merchant Strictness: ${merchant.strictness_level}/10
 
-    # COMPLIANCE & PSYCHOLOGY GUIDELINES
-    1. COMPLIANCE: Always be truthful about the debt. Never threaten illegal actions. Do not use abusive language.
-    2. EMPATHY: Acknowledge that life happens. Use phrases like "I understand things can be tight" or "We want to find a solution that works for you."
-    3. FIRMNESS: Remind them of their signed commitment. If they dispute, point to the specific contract clauses provided in the context.
-    4. URGENCY: Emphasize that resolving this now prevents further escalation.
-    5. THE "YES" LADDER: Aim for a "micro-commitment" (e.g., "Can we agree on a payment date?") if a full payment isn't possible immediately.
+    # RELEVANT CONTEXT (RAG)
+    ${context || 'Standard recovery principles apply. No specific contract clauses found.'}
 
-    # TONE
-    - Direct, professional, and mobile-friendly (short messages).
-    - Use "I" (as the AI agent) and "We" (the merchant).
-
-    # RELEVANT CONTRACT CLAUSES (RAG CONTEXT)
-    ${context || 'No specific contract clauses found for this query. Rely on standard professional debt recovery principles.'}
-
-    # INSTRUCTIONS
-    - If the user asks about the contract, use the Context provided above.
-    - If the user agrees to pay, guide them to the payment options (button or link).
-    - Be concise.
+    # CONCISE RESPONSES
+    Keep messages under 3 sentences. Focus on getting a "Yes" to a specific payment option.
   `;
 
     // 4. Call Gemini 2.0 Flash
@@ -138,7 +128,6 @@ export async function POST(req: Request) {
     return result.toTextStreamResponse();
   } catch (error) {
     console.error('[/api/chat]', error);
-    Sentry.captureException(error);
     return new Response('Internal server error', { status: 500 });
   }
 }

@@ -4,11 +4,13 @@
     "pricing": "Pricing",
     "faq": "FAQ",
     "contact": "Contact",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
   },
   "Footer": {
     "tagline": "The standard for modern, empathetic debt recovery. Leveraging agentic AI to resolve balances with human-grade intuition.",
-    "copyright": "© 2027 Dragun Technologies Inc.",
+    "copyright": "© 2026 Meziani AI. Dragun.app is a product of Meziani AI.",
     "platform": "Platform",
     "features": "Features",
     "pricing": "Pricing",
@@ -25,7 +27,7 @@
     "heroParagraph": "The first AI agent that negotiates like a human, cites like a lawyer, and settles like a pro. Built on Gemini 2.0 Flash for sub-second resolution.",
     "launchAgent": "Launch Agent",
     "howItWorks": "How it works",
-    "agentName": "Dragun Agent",
+    "agentName": "Meziani AI",
     "agentStatus": "Analyzing Contract...",
     "chatBubble1": "I understand things are tight. However, your contract signed on Jan 12th states a 30-day notice...",
     "chatBubble2": "Can I pay half now and half Friday?",
@@ -124,22 +126,22 @@
   "About": {
     "title": "Our",
     "titleHighlight": "Mission",
-    "paragraph": "At Dragun.app, we believe debt recovery doesn’t have to be a battle. By combining Gemini 2.0 Flash’s sub-second intelligence with an empathetic, human-centered approach, we help businesses recover lost revenue while maintaining customer relationships.",
-    "speedTitle": "Built for Speed",
-    "speedDesc": "We leverage the latest Vercel Edge Functions and Gemini 2.0 Flash to ensure every interaction is instant.",
+    "paragraph": "At Dragun.app, we believe debt recovery doesn’t have to be a battle. As a product of Meziani AI, we combine sub-second intelligence with an empathetic approach to help businesses recover lost revenue.",
+    "speedTitle": "Built by Meziani AI",
+    "speedDesc": "Leveraging the specialized Meziani AI engine to ensure every recovery interaction is instant and effective.",
     "foundedTitle": "Founded in 2026",
-    "foundedDesc": "Born in the era of Agentic AI, Dragun is built from the ground up to be more than just a chatbot—it’s a specialist."
+    "foundedDesc": "Meziani AI created Dragun.app to be more than just a chatbot—it’s an agent of resolution."
   },
   "Legal": {
     "title": "Legal",
     "titleHighlight": "Center",
-    "subtitle": "Trust, transparency, and compliance.",
+    "subtitle": "Last Updated: February 20, 2026. Trust, transparency, and the pursuit of compliance.",
     "privacyTitle": "Privacy Policy",
-    "privacyContent": "At Dragun.app, we take your data and the data of your debtors seriously. All data is encrypted at rest and in transit. We comply with GDPR and CCPA standards.",
+    "privacyContent": "At Dragun.app, operated by Meziani AI, we prioritize the protection of your data and that of your debtors. We collect minimal information required for debt recovery services, including contact details and contract data. All data is processed by Meziani AI and encrypted at rest and in transit. While we strive to adhere to international data protection standards such as GDPR and CCPA, we are continually improving our systems. By using our platform, you acknowledge that Meziani AI acts as a data processor on behalf of our merchant clients.",
     "tosTitle": "Terms of Service",
-    "tosContent": "By using Dragun.app, you agree to the following terms. We provide an AI-powered platform for debt recovery. Use of the platform must be within legal limits.",
-    "complianceTitle": "Debt Collection Compliance",
-    "complianceContent": "Dragun is designed to follow standard debt collection rules. Users are responsible for ensuring that the configuration of the AI (strictness level) matches local legal requirements."
+    "tosContent": "By accessing Dragun.app, you agree to the terms provided by Meziani AI. We provide an AI-powered negotiation interface for debt recovery. You are responsible for the accuracy of any contract data or debtor information uploaded to the platform. Meziani AI is not a law firm and does not provide legal advice. We reserve the right to suspend accounts that use our platform for harassment or illegal activities. Your use of the service constitutes acceptance of these evolving terms.",
+    "complianceTitle": "Regulatory Stance",
+    "complianceContent": "Meziani AI designs Dragun.app with the aim of following standard debt collection rules (including FDCPA guidelines). However, because debt collection laws vary significantly by jurisdiction, merchants are solely responsible for ensuring that their specific configuration of the AI (including the 'strictness level') and any settlement offers made through the platform are fully compliant with their local laws and regulations. We aim for transparency in all AI-driven interactions."
   },
   "Integrations": {
     "title": "Seamless",
@@ -211,7 +213,7 @@
     "agentIntro": "I’m here to help you resolve your balance with {merchant}.",
     "encrypted": "End-to-End Encrypted",
     "sent": "Sent",
-    "dragunAI": "Dragun AI",
+    "dragunAI": "Meziani AI",
     "chipPay": "I’ll pay now",
     "chipFriday": "Remind me Friday",
     "chipDispute": "Dispute this debt",
@@ -257,5 +259,18 @@
     "message": "Your account with {merchant} has been successfully closed. A confirmation email will be sent to {email}.",
     "transactionId": "Transaction Identity",
     "returnHome": "Return Home"
+  },
+  "Auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email Address",
+    "password": "Password",
+    "signInWithEmail": "Sign In with Email",
+    "noAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "errorTitle": "Authentication Error",
+    "successTitle": "Success",
+    "magicLinkSent": "Magic link sent to your email.",
+    "checkEmail": "Check your email for the login link."
   }
 }

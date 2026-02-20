@@ -7,8 +7,6 @@ export function validateEnv() {
     'GOOGLE_GENERATIVE_AI_API_KEY',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
-    'SENTRY_DSN',
-    'NEXT_PUBLIC_SENTRY_DSN',
   ];
 
   const missing = required.filter((key) => !process.env[key]);

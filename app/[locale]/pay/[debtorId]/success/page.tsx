@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface Debtor {
   name: string;
@@ -16,6 +16,7 @@ export default function SuccessPage({ params }: { params: Promise<{ debtorId: st
   const { debtorId } = use(params);
   const t = useTranslations('Success');
   const [debtor, setDebtor] = useState<Debtor | null>(null);
+  const supabase = createClient();
 
   useEffect(() => {
     async function fetchDebtor() {
@@ -27,7 +28,7 @@ export default function SuccessPage({ params }: { params: Promise<{ debtorId: st
       setDebtor(data);
     }
     fetchDebtor();
-  }, [debtorId]);
+  }, [debtorId, supabase]);
 
   if (!debtor) return <div className="p-10 text-center">{t('finalizing')}</div>;
 

@@ -1,11 +1,12 @@
 
 Product Requirement Document (PRD): Dragun.app (v1.1)
 Project Name	Dragun.app
+Owner	Meziani AI
 Stack	Next.js 16, Tailwind/DaisyUI, Supabase, Gemini 2.0 Flash
 Status	CRITICAL / OVERDUE
 Author	Yani (via The Butler)
 1. Executive Summary (Revised)
-Dragun.app is an automated debt recovery agent powered by Gemini 2.0 Flash. It ingests merchant contracts and communication history to function as a knowledgeable, empathetic negotiator. It is built on a Vercel/Supabase architecture for rapid scale and real-time settlement.
+Dragun.app is an automated debt recovery platform owned and operated by Meziani AI. Powered by Gemini 2.0 Flash, it ingests merchant contracts and communication history to function as a knowledgeable, empathetic negotiator.
 
 2. Technical Architecture: The "Bleeding Edge" Stack
 You wanted the shiny new toys? Here they are. Do not cut yourself.

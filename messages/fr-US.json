@@ -4,7 +4,9 @@
     "pricing": "Tarifs",
     "faq": "FAQ",
     "contact": "Contact",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter"
   },
   "Footer": {
     "tagline": "La référence en matière de recouvrement de créances moderne et empathique. L’IA agentique au service du règlement avec une intuition humaine.",
@@ -257,5 +259,18 @@
     "message": "Votre compte chez {merchant} a été fermé avec succès. Un e-mail de confirmation sera envoyé à {email}.",
     "transactionId": "Identifiant de Transaction",
     "returnHome": "Retourner à l’Accueil"
+  },
+  "Auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "signInWithEmail": "Se connecter par e-mail",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "errorTitle": "Erreur d'authentification",
+    "successTitle": "Succès",
+    "magicLinkSent": "Un lien magique a été envoyé à votre adresse e-mail.",
+    "checkEmail": "Consultez vos e-mails pour obtenir le lien de connexion."
   }
 }

@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 interface Debtor {
   id: string;
@@ -22,6 +22,7 @@ export default function PaymentPage({ params }: { params: Promise<{ debtorId: st
   const t = useTranslations('Pay');
   const [debtor, setDebtor] = useState<Debtor | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     async function fetchDebtor() {
@@ -34,7 +35,7 @@ export default function PaymentPage({ params }: { params: Promise<{ debtorId: st
       setLoading(false);
     }
     fetchDebtor();
-  }, [debtorId]);
+  }, [debtorId, supabase]);
 
   const handlePayment = async (amount: number, description: string) => {
     if (!debtor) return;
