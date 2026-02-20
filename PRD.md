@@ -93,7 +93,6 @@ Stripe Elements: Embedded checkout sheet.
 5. Development Roadmap (The "24-Hour Sprint")
 Master Yani, you have no time for a roadmap. You have a checklist.
 
-Hour 0-2: npx create-next-app with DaisyUI. Set up Supabase project. Enable pgvector.
 
 Hour 2-6: Build the "Knowledge Base" uploader. Get the PDF parsing working.
 
