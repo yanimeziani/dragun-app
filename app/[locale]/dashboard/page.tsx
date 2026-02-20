@@ -110,7 +110,7 @@ export default async function DashboardPage({
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#6419E6]/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Top Nav */}
-      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-30" style={{ paddingTop: 'env(safe-area-inset-top)', paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
+      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-30 pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center font-bold text-[#D4AF37] shadow-2xl relative transition-all group-hover:scale-110 group-hover:border-[#D4AF37]/30">

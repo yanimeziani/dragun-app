@@ -25,12 +25,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   
-  /* TV Safe Area Padding - Prevents content cutting at edges */
-  padding: env(safe-area-inset-top, 24px) env(safe-area-inset-right, 24px) env(safe-area-inset-bottom, 24px) env(safe-area-inset-left, 24px);
-}
-
-@supports not (padding: env(safe-area-inset-top)) {
-  body {
-    padding: 24px;
-  }
+  /* Safe Area Padding for TVs and notched devices */
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
 }

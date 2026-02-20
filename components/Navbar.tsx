@@ -37,7 +37,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-6 py-8 pointer-events-none" style={{ paddingTop: 'max(32px, env(safe-area-inset-top))', paddingLeft: 'max(24px, env(safe-area-inset-left))', paddingRight: 'max(24px, env(safe-area-inset-right))' }}>
+    <div className="fixed top-0 left-0 right-0 z-50 px-6 py-8 pointer-events-none pt-[env(safe-area-inset-top,2rem)] pl-[env(safe-area-inset-left,1.5rem)] pr-[env(safe-area-inset-right,1.5rem)]">
       <nav className="max-w-7xl mx-auto flex justify-between items-center px-8 py-4 rounded-[2rem] border border-white/5 bg-black/40 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center font-bold text-[#D4AF37] shadow-2xl relative transition-all group-hover:scale-110 group-hover:border-[#D4AF37]/30">
