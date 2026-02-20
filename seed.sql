@@ -22,9 +22,9 @@ INSERT INTO auth.users (
 )
 VALUES (
   '00000000-0000-0000-0000-000000000001',
-  'gym@venice.com',
+  'mezianiyani0@gmail.com',
   NOW(),
-  '{"full_name": "Venice Gym", "provider": "google"}'::jsonb,
+  '{"full_name": "Yani Meziani", "provider": "google"}'::jsonb,
   '{"provider": "google", "providers": ["google"]}'::jsonb,
   'authenticated',
   'authenticated',
@@ -37,8 +37,8 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO merchants (id, name, email, strictness_level, settlement_floor)
 VALUES (
   '00000000-0000-0000-0000-000000000001',
-  'Venice Gym',
-  'gym@venice.com',
+  'Yani Meziani',
+  'mezianiyani0@gmail.com',
   7,
   0.75
 )
