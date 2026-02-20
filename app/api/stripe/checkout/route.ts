@@ -16,14 +16,15 @@ export async function POST(req: Request) {
     return new Response('Invalid amount', { status: 400 });
   }
 
-  const { data: debtor } = await supabaseAdmin
+  const { data: debtor, error: debtorError } = await supabaseAdmin
     .from('debtors')
-    .select('*, merchant:merchants(name, settlement_floor, stripe_account_id)')
+    .select('*, merchant:merchants(*)')
     .eq('id', debtorId)
     .single();
 
-  if (!debtor) {
-    return new Response('Debtor not found', { status: 404 });
+  if (debtorError || !debtor) {
+    console.error('Checkout lookup error:', debtorError);
+    return new Response('Debtor or merchant record not found', { status: 404 });
   }
 
   const merchant = debtor.merchant as any; // Cast for access
@@ -38,8 +39,7 @@ export async function POST(req: Request) {
     return new Response('Amount exceeds debt', { status: 400 });
   }
 
-  // Stripe Connect Configuration
-  // We use Destination Charges with a 5% platform fee
+  // Stripe Checkout Configuration
   const sessionOptions: Stripe.Checkout.SessionCreateParams = {
     payment_method_types: ['card'],
     line_items: [
@@ -63,14 +63,14 @@ export async function POST(req: Request) {
     },
   };
 
-  // If the merchant has a connected account, we use it
-  if (merchant.stripe_account_id) {
+  // If the merchant has a connected account AND has completed onboarding, we use Destination Charges
+  if (merchant.stripe_account_id && merchant.stripe_onboarding_complete) {
     sessionOptions.payment_intent_data = {
       application_fee_amount: Math.round(amount * 100 * 0.05), // 5% Meziani AI Gateway Fee
       transfer_data: {
         destination: merchant.stripe_account_id,
       },
-      // This makes the merchant the 'Merchant of Record' for the debtor's bank statement
+      // This makes the merchant the 'Merchant of Record'
       on_behalf_of: merchant.stripe_account_id,
     };
   }

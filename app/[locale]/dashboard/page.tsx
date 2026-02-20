@@ -24,9 +24,14 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const t = await getTranslations('Dashboard');
   const merchantId = await getMerchantId();
+  const stripeSuccess = (await searchParams).stripe_success === 'true';
 
   if (!merchantId) {
      return <div>Unauthorized</div>;
@@ -54,7 +59,8 @@ export default async function DashboardPage() {
     );
   }
 
-  const hasStripe = !!merchant.stripe_account_id;
+  const hasStripeAccount = !!merchant.stripe_account_id;
+  const isOnboardingComplete = !!merchant.stripe_onboarding_complete;
 
   const { data: contract } = await supabaseAdmin
     .from('contracts')
@@ -113,13 +119,33 @@ export default async function DashboardPage() {
             </div>
             <h1 className="text-xl font-black tracking-[0.15em] uppercase hidden sm:block">DRAGUN<span className="text-[#D4AF37]">.</span></h1>
           </Link>
-          <DashboardTopNav merchantName={merchant.name} hasStripe={hasStripe} />
+          <DashboardTopNav 
+            merchantName={merchant.name} 
+            hasStripeAccount={hasStripeAccount} 
+            isOnboardingComplete={isOnboardingComplete} 
+          />
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 py-12 space-y-16 relative z-10">
+        {/* Stripe Success Alert */}
+        {stripeSuccess && isOnboardingComplete && (
+          <div className="bg-[#10b981]/10 border border-[#10b981]/20 rounded-2xl p-6 flex items-center justify-between group animate-in slide-in-from-top duration-500">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-[#10b981]/20 rounded-full flex items-center justify-center text-[#10b981]">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-black uppercase tracking-widest text-white">Gateway Activated</p>
+                <p className="text-xs text-white/40 font-medium">Your Stripe Connect account is now fully verified and ready to receive payments.</p>
+              </div>
+            </div>
+            <Link href="/dashboard" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-colors">Dismiss</Link>
+          </div>
+        )}
+
         {/* Stripe Onboarding Alert */}
-        {!hasStripe && (
+        {!isOnboardingComplete && (
           <div className="relative group p-[1px] rounded-[2rem] overflow-hidden bg-gradient-to-br from-amber-500/50 to-transparent">
              <div className="bg-[#0a0a0a] rounded-[2rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
               <div className="flex items-start gap-6">
@@ -127,13 +153,19 @@ export default async function DashboardPage() {
                   <AlertCircle className="w-8 h-8" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">Activate Gateway</h3>
-                  <p className="text-white/40 text-sm font-medium max-w-md leading-relaxed">Connect your Stripe account to enable Meziani AI to recover funds directly into your balance. A 5% platform fee applies to all recovered debts.</p>
+                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                    {hasStripeAccount ? 'Complete Gateway Setup' : 'Activate Gateway'}
+                  </h3>
+                  <p className="text-white/40 text-sm font-medium max-w-md leading-relaxed">
+                    {hasStripeAccount 
+                      ? 'You have started the setup. Please finish the Stripe onboarding to start receiving funds.'
+                      : 'Connect your Stripe account to enable Meziani AI to recover funds directly into your balance. A 5% platform fee applies.'}
+                  </p>
                 </div>
               </div>
               <form action={createStripeConnectAccount}>
                 <button className="w-full md:w-auto bg-[#D4AF37] hover:bg-white text-black font-black text-xs px-10 py-5 rounded-2xl transition-all shadow-2xl uppercase tracking-widest flex items-center justify-center group/btn">
-                  Setup Stripe Connect
+                  {hasStripeAccount ? 'Resume Onboarding' : 'Setup Stripe Connect'}
                   <ArrowRight className="w-4 h-4 ml-3 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </form>

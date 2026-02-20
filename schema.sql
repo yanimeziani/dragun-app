@@ -8,6 +8,8 @@ CREATE TABLE merchants (
   email TEXT UNIQUE NOT NULL,
   strictness_level INT DEFAULT 5, -- 1-10 slider
   settlement_floor FLOAT DEFAULT 0.8, -- 80% default
+  stripe_account_id TEXT,
+  stripe_onboarding_complete BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

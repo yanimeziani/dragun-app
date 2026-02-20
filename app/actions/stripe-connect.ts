@@ -16,13 +16,16 @@ export async function createStripeConnectAccount() {
   if (!user) throw new Error('Unauthorized');
 
   // 1. Get current merchant data
-  const { data: merchant } = await supabaseAdmin
+  const { data: merchant, error: merchantError } = await supabaseAdmin
     .from('merchants')
-    .select('stripe_account_id, email, name')
+    .select('*')
     .eq('id', user.id)
     .single();
 
-  if (!merchant) throw new Error('Merchant not found');
+  if (merchantError || !merchant) {
+    console.error('Merchant lookup error:', merchantError);
+    throw new Error('Merchant profile not found. Please ensure you have completed registration.');
+  }
 
   let accountId = merchant.stripe_account_id;
 
@@ -69,13 +72,16 @@ export async function createStripeLoginLink() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: merchant } = await supabaseAdmin
+  const { data: merchant, error: merchantError } = await supabaseAdmin
     .from('merchants')
     .select('stripe_account_id')
     .eq('id', user.id)
     .single();
 
-  if (!merchant?.stripe_account_id) throw new Error('No Connect account found');
+  if (merchantError || !merchant?.stripe_account_id) {
+    console.error('Stripe Login Link Error:', merchantError);
+    throw new Error('No Connect account found');
+  }
 
   const loginLink = await stripe.accounts.createLoginLink(merchant.stripe_account_id);
   redirect(loginLink.url);

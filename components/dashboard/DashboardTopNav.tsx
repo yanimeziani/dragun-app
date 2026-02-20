@@ -8,10 +8,11 @@ import { createStripeConnectAccount, createStripeLoginLink } from '@/app/actions
 
 interface Props {
   merchantName: string;
-  hasStripe: boolean;
+  hasStripeAccount: boolean;
+  isOnboardingComplete: boolean;
 }
 
-export default function DashboardTopNav({ merchantName, hasStripe }: Props) {
+export default function DashboardTopNav({ merchantName, hasStripeAccount, isOnboardingComplete }: Props) {
   const t = useTranslations('Dashboard');
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -86,13 +87,21 @@ export default function DashboardTopNav({ merchantName, hasStripe }: Props) {
                 <span>{t('ragContext')}</span>
               </a>
 
-              {hasStripe ? (
+              {isOnboardingComplete ? (
                 <button
                   onClick={() => createStripeLoginLink()}
                   className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold text-white/40 hover:text-blue-400 hover:bg-white/[0.03] rounded-xl transition-all group/item tracking-widest uppercase"
                 >
                   <Wallet className="w-4 h-4" />
                   <span>Stripe Dashboard</span>
+                </button>
+              ) : hasStripeAccount ? (
+                <button
+                  onClick={() => createStripeConnectAccount()}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold text-amber-500 hover:bg-white/[0.03] rounded-xl transition-all group/item tracking-widest uppercase"
+                >
+                  <Wallet className="w-4 h-4" />
+                  <span>Resume Setup</span>
                 </button>
               ) : (
                 <button

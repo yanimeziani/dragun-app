@@ -47,10 +47,6 @@ export async function POST(req: Request) {
       }
 
       // 2. Update Debtor Status
-      // Ideally check if fully paid, but for now assume any payment is a settlement or part of it.
-      // If we want to support partial payments, we'd subtract from total_debt.
-      // But the PRD implies "settlement", so let's mark as 'paid' or 'settled'.
-      
       const { error: debtorError } = await supabaseAdmin
         .from('debtors')
         .update({ status: 'settled', last_contacted: new Date().toISOString() })
@@ -58,6 +54,20 @@ export async function POST(req: Request) {
 
       if (debtorError) {
         console.error('Error updating debtor:', debtorError);
+        return new Response('Database error', { status: 500 });
+      }
+    }
+  } else if (event.type === 'account.updated') {
+    const account = event.data.object as Stripe.Account;
+    
+    if (account.details_submitted) {
+      const { error: merchantError } = await supabaseAdmin
+        .from('merchants')
+        .update({ stripe_onboarding_complete: true })
+        .eq('stripe_account_id', account.id);
+
+      if (merchantError) {
+        console.error('Error updating merchant onboarding status:', merchantError);
         return new Response('Database error', { status: 500 });
       }
     }
