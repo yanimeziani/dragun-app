@@ -97,8 +97,7 @@ export default function Navbar() {
               <button
                 onClick={async () => {
                   await signOut();
-                  router.push('/');
-                  router.refresh();
+                  window.location.href = '/';
                 }}
                 className="h-10 px-6 rounded-xl bg-[#D4AF37] text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-[#D4AF37]/10"
               >

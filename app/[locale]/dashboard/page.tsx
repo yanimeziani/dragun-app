@@ -48,32 +48,55 @@ export default async function DashboardPage({
     .single();
 
   if (merchantError || !merchant) {
-    // Self-healing: If merchant not found, attempt to create it
+    // Self-healing: If merchant not found by ID, check by email
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
-      const { data: newMerchant, error: createError } = await supabaseAdmin
+      // Try finding by email first to avoid unique constraint errors
+      const { data: existingByEmail } = await supabaseAdmin
         .from('merchants')
-        .insert({
-          id: user.id,
-          email: user.email!,
-          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'New Merchant',
-        })
-        .select()
+        .select('*')
+        .eq('email', user.email!)
         .single();
 
-      if (!createError && newMerchant) {
-        merchant = newMerchant;
-        // Also seed a sample debtor
-        await supabaseAdmin.from('debtors').insert({
-          merchant_id: user.id,
-          name: 'John Sample',
-          email: 'john@example.com',
-          total_debt: 1250.00,
-          currency: 'USD',
-          status: 'pending'
-        });
+      if (existingByEmail) {
+        // Update the existing record to match the auth ID if they differ
+        if (existingByEmail.id !== user.id) {
+          const { data: updatedMerchant } = await supabaseAdmin
+            .from('merchants')
+            .update({ id: user.id })
+            .eq('email', user.email!)
+            .select()
+            .single();
+          merchant = updatedMerchant;
+        } else {
+          merchant = existingByEmail;
+        }
+      } else {
+        // Truly doesn't exist, create it
+        const { data: newMerchant, error: createError } = await supabaseAdmin
+          .from('merchants')
+          .insert({
+            id: user.id,
+            email: user.email!,
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'New Merchant',
+          })
+          .select()
+          .single();
+
+        if (!createError && newMerchant) {
+          merchant = newMerchant;
+          // Also seed a sample debtor
+          await supabaseAdmin.from('debtors').insert({
+            merchant_id: user.id,
+            name: 'John Sample',
+            email: 'john@example.com',
+            total_debt: 1250.00,
+            currency: 'USD',
+            status: 'pending'
+          });
+        }
       }
     }
   }
