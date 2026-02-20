@@ -263,14 +263,7 @@
   "Auth": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
-    "email": "Email Address",
-    "password": "Password",
-    "signInWithEmail": "Sign In with Email",
-    "noAccount": "Don't have an account?",
-    "alreadyHaveAccount": "Already have an account?",
     "errorTitle": "Authentication Error",
-    "successTitle": "Success",
-    "magicLinkSent": "Magic link sent to your email.",
-    "checkEmail": "Check your email for the login link."
+    "successTitle": "Success"
   }
 }

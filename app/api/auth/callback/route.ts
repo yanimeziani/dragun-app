@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -9,8 +10,30 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const { data: { user }, error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (!error && user) {
+      // Check if merchant record exists, if not create it
+      const { data: merchant } = await supabaseAdmin
+        .from('merchants')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!merchant) {
+        const { error: merchantError } = await supabaseAdmin
+          .from('merchants')
+          .insert({
+            id: user.id,
+            email: user.email!,
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'New Merchant',
+          });
+        
+        if (merchantError) {
+          console.error('Error creating merchant record:', merchantError);
+        }
+      }
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
