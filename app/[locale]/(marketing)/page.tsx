@@ -6,7 +6,7 @@ export default function LandingPage() {
   const t = useTranslations('Home');
 
   return (
-    <div className="relative isolate overflow-hidden bg-[#050505]">
+    <div className="relative isolate bg-[#050505]">
       {/* Premium Ambient Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#D4AF37]/5 blur-[120px] rounded-full"></div>

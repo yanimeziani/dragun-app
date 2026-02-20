@@ -104,13 +104,13 @@ export default async function DashboardPage({
   const totalRecovered = debtors?.reduce((acc, d) => acc + (d.status === 'paid' ? d.total_debt : 0), 0) || 0;
 
   return (
-    <div id="top" className="bg-[#050505] min-h-screen text-white selection:bg-[#D4AF37] selection:text-black pb-24 md:pb-12 relative overflow-x-hidden">
+    <div id="top" className="bg-[#050505] min-h-screen text-white selection:bg-[#D4AF37] selection:text-black pb-24 md:pb-12 relative">
       {/* Premium Background Elements */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#D4AF37]/5 to-transparent pointer-events-none" />
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#6419E6]/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Top Nav */}
-      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-30">
+      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-30" style={{ paddingTop: 'env(safe-area-inset-top)', paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-xl flex items-center justify-center font-bold text-[#D4AF37] shadow-2xl relative transition-all group-hover:scale-110 group-hover:border-[#D4AF37]/30">
