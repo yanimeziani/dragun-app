@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { Settings, FileText, LogOut, ChevronDown, ShieldCheck, Wallet } from 'lucide-react';
 import { createStripeConnectAccount, createStripeLoginLink } from '@/app/actions/stripe-connect';
+import { signOut } from '@/app/actions/auth';
 
 interface Props {
   merchantName: string;
@@ -14,6 +15,7 @@ interface Props {
 
 export default function DashboardTopNav({ merchantName, hasStripeAccount, isOnboardingComplete }: Props) {
   const t = useTranslations('Dashboard');
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -115,13 +117,17 @@ export default function DashboardTopNav({ merchantName, hasStripeAccount, isOnbo
 
               <div className="h-px bg-white/5 mx-2 my-1" />
 
-              <Link
-                href="/"
-                className="flex items-center gap-3 px-4 py-3 text-[11px] font-bold text-white/20 hover:text-white/60 hover:bg-white/[0.03] rounded-xl transition-all tracking-widest uppercase"
+              <button
+                onClick={async () => {
+                  await signOut();
+                  router.push('/');
+                  router.refresh();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold text-white/20 hover:text-white/60 hover:bg-white/[0.03] rounded-xl transition-all tracking-widest uppercase"
               >
                 <LogOut className="w-4 h-4" />
                 <span>{t('backToSite')}</span>
-              </Link>
+              </button>
             </div>
           </div>
         )}
