@@ -4,14 +4,14 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { generateEmbedding } from '@/lib/ai-provider';
 import { chunkText } from '@/lib/chunking';
 import { extractText, getDocumentProxy } from 'unpdf';
-import { getMerchantId } from '@/lib/auth';
+import { ensureMerchant } from '@/lib/merchant';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const CONCURRENCY_LIMIT = 5;
 
 export async function uploadContract(formData: FormData) {
   try {
-    const merchantId = await getMerchantId();
+    const merchantId = await ensureMerchant();
     if (!merchantId) throw new Error('Unauthorized');
 
     const file = formData.get('contract') as File;

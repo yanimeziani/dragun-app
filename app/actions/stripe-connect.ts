@@ -1,30 +1,28 @@
 'use server';
 
 import Stripe from 'stripe';
-import { createClient } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { redirect } from 'next/navigation';
+import { ensureMerchant } from '@/lib/merchant';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-01-28.clover',
 });
 
 export async function createStripeConnectAccount() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) throw new Error('Unauthorized');
+  const merchantId = await ensureMerchant();
+  if (!merchantId) throw new Error('Unauthorized');
 
   // 1. Get current merchant data
   const { data: merchant, error: merchantError } = await supabaseAdmin
     .from('merchants')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', merchantId)
     .single();
 
   if (merchantError || !merchant) {
     console.error('Merchant lookup error:', merchantError);
-    throw new Error('Merchant profile not found. Please ensure you have completed registration.');
+    throw new Error('Merchant profile initialization failed. Please try again.');
   }
 
   let accountId = merchant.stripe_account_id;
@@ -53,7 +51,7 @@ export async function createStripeConnectAccount() {
     await supabaseAdmin
       .from('merchants')
       .update({ stripe_account_id: accountId })
-      .eq('id', user.id);
+      .eq('id', merchantId);
   }
 
   // 3. Create Account Link for onboarding
@@ -68,14 +66,13 @@ export async function createStripeConnectAccount() {
 }
 
 export async function createStripeLoginLink() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  const merchantId = await ensureMerchant();
+  if (!merchantId) throw new Error('Unauthorized');
 
   const { data: merchant, error: merchantError } = await supabaseAdmin
     .from('merchants')
     .select('stripe_account_id')
-    .eq('id', user.id)
+    .eq('id', merchantId)
     .single();
 
   if (merchantError || !merchant?.stripe_account_id) {

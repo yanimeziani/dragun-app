@@ -1,23 +1,27 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { getMerchantId } from '@/lib/auth';
+import { ensureMerchant } from '@/lib/merchant';
 
 export async function updateMerchantSettings(settings: { 
   name?: string, 
   strictness_level?: number, 
   settlement_floor?: number 
 }) {
-  const merchantId = await getMerchantId();
-  if (!merchantId) throw new Error('Unauthorized');
+  try {
+    const merchantId = await ensureMerchant();
+    if (!merchantId) throw new Error('Unauthorized');
 
-  const { error } = await supabaseAdmin
-    .from('merchants')
-    .update(settings)
-    .eq('id', merchantId);
+    const { error } = await supabaseAdmin
+      .from('merchants')
+      .update(settings)
+      .eq('id', merchantId);
 
-  if (error) throw new Error(error.message);
-  return { success: true };
+    if (error) throw new Error(error.message);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 }
 
 export async function completeOnboarding(data: {
@@ -25,17 +29,21 @@ export async function completeOnboarding(data: {
   strictness_level: number,
   settlement_floor: number
 }) {
-  const merchantId = await getMerchantId();
-  if (!merchantId) throw new Error('Unauthorized');
+  try {
+    const merchantId = await ensureMerchant();
+    if (!merchantId) throw new Error('Unauthorized');
 
-  const { error } = await supabaseAdmin
-    .from('merchants')
-    .update({
-      ...data,
-      onboarding_complete: true
-    })
-    .eq('id', merchantId);
+    const { error } = await supabaseAdmin
+      .from('merchants')
+      .update({
+        ...data,
+        onboarding_complete: true
+      })
+      .eq('id', merchantId);
 
-  if (error) throw new Error(error.message);
-  return { success: true };
+    if (error) throw new Error(error.message);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 }

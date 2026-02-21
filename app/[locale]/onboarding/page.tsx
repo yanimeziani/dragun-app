@@ -36,24 +36,32 @@ export default function OnboardingPage() {
   async function handleFinish() {
     setLoading(true);
     try {
-      // 1. Upload contract if exists
+      // 1. Ensure merchant exists first (crucial if no file is uploaded)
+      const { completeOnboarding } = await import('@/app/actions/merchant-settings');
+      const { uploadContract } = await import('@/app/actions/upload-contract');
+
+      // 2. Upload contract if exists
       if (file) {
         const formData = new FormData();
         formData.append('contract', file);
-        await uploadContract(formData);
+        const uploadResult = await uploadContract(formData);
+        if (!uploadResult.success) throw new Error(uploadResult.error || 'Upload failed');
       }
 
-      // 2. Complete onboarding profile
-      await completeOnboarding({
+      // 3. Complete onboarding profile
+      const onboardingResult = await completeOnboarding({
         name,
         strictness_level: strictness,
         settlement_floor: settlement / 100
       });
+      
+      if (!onboardingResult.success) throw new Error(onboardingResult.error || 'Onboarding update failed');
 
       router.push('/dashboard');
     } catch (error) {
       console.error('Onboarding failed:', error);
-      alert('Setup failed. Please check your connection and try again.');
+      const message = error instanceof Error ? error.message : 'Setup failed';
+      alert(`${message}. Please check your connection and try again.`);
     } finally {
       setLoading(false);
     }
