@@ -65,21 +65,21 @@
     "perMonth": "/mo",
     "starter": {
       "name": "Starter",
-      "description": "For small businesses",
+      "description": "For small business pilots",
       "price": "$0",
       "feature1": "Up to 5 active debtors",
-      "feature2": "Standard AI model",
-      "feature3": "Email support",
-      "cta": "Get Started"
+      "feature2": "5% Recovery Fee",
+      "feature3": "Standard Support",
+      "cta": "Start Pilot"
     },
     "pro": {
       "name": "Pro",
       "description": "For growing gyms & studios",
       "price": "$49",
       "feature1": "Unlimited active debtors",
-      "feature2": "Gemini 2.0 Flash (Fastest)",
-      "feature3": "Priority support",
-      "feature4": "Contract Knowledge Base",
+      "feature2": "5% Recovery Fee",
+      "feature3": "Priority Support",
+      "feature4": "Full RAG Knowledge Base",
       "cta": "Go Pro"
     },
     "enterprise": {

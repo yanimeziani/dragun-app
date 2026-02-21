@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { ChevronLeft, ShieldCheck, Sparkles, Check, ArrowRight } from 'lucide-react';
 
 interface Debtor {
   id: string;
@@ -55,12 +56,17 @@ export default function PaymentPage({ params }: { params: Promise<{ debtorId: st
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-base-100 flex items-center justify-center">
-      <span className="loading loading-spinner loading-lg text-primary"></span>
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-[#D4AF37]/20 border-t-[#D4AF37] rounded-full animate-spin"></div>
     </div>
   );
 
-  if (!debtor) return <div className="p-10 text-error bg-base-100 min-h-screen text-center">{t('notFound')}</div>;
+  if (!debtor) return (
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-10 space-y-6">
+       <ShieldCheck className="w-16 h-16 text-[#F87272] opacity-20" />
+       <p className="text-white/40 font-black tracking-widest uppercase">{t('notFound')}</p>
+    </div>
+  );
 
   const fullDebt = debtor.total_debt;
   const settlementFloor = debtor.merchant.settlement_floor;
@@ -68,120 +74,145 @@ export default function PaymentPage({ params }: { params: Promise<{ debtorId: st
   const savingPercent = Math.round((1 - settlementAmount / fullDebt) * 100);
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content py-16 px-6 relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/5 blur-[120px] rounded-full -z-10"></div>
+    <main className="relative isolate bg-[#050505] min-h-screen text-white overflow-hidden selection:bg-[#D4AF37] selection:text-black">
+      {/* Premium Ambient Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#D4AF37]/5 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#6419E6]/10 blur-[120px] rounded-full"></div>
+      </div>
 
-      <div className="max-w-4xl mx-auto space-y-12">
-        <div className="flex justify-start">
-          <Link href={`/chat/${debtorId}`} className="flex items-center gap-2 text-base-content/50 hover:text-base-content transition-colors group text-xs font-bold uppercase tracking-widest">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-1"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-            {t('returnToChat')}
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-40 flex flex-col items-center relative z-10">
+        <div className="w-full flex justify-start mb-16">
+          <Link href={`/chat/${debtorId}`} className="group flex items-center gap-3 px-6 py-3 rounded-full bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] transition-all">
+            <ChevronLeft className="w-4 h-4 text-white/40 group-hover:text-white transition-colors" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 group-hover:text-white transition-colors">{t('returnToChat')}</span>
           </Link>
         </div>
 
-        <div className="text-center space-y-4">
-          <div className="badge badge-outline border-primary/30 text-primary text-[10px] font-bold uppercase tracking-widest px-4 py-3">{t('portalBadge')}</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-base-content tracking-tight">
-            {t('title')} <span className="text-primary">{t('titleHighlight')}</span> {t('titleEnd')}
+        <div className="text-center space-y-6 mb-24">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5 backdrop-blur-xl text-[#D4AF37] text-[10px] font-black tracking-[0.3em] uppercase">
+            <Sparkles className="w-3 h-3" />
+            {t('portalBadge')}
+          </div>
+          <h1 className="text-5xl md:text-8xl font-black tracking-[-0.04em] leading-none text-white uppercase">
+            {t('title')} <span className="italic font-serif tracking-tight lowercase text-[#D4AF37]">{t('titleHighlight')}</span> {t('titleEnd')}
           </h1>
-          <p className="text-base-content/60 max-w-xl mx-auto text-sm leading-relaxed">
+          <p className="text-base md:text-lg text-white/40 max-w-2xl mx-auto leading-relaxed font-medium tracking-tight">
             {t('subtitle')}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
           {/* Pay in Full */}
-          <div className="card bg-base-200/50 border border-base-300 shadow-xl hover:border-primary/50 transition-all duration-300 group">
-            <div className="card-body p-8 space-y-6">
-              <div>
-                <h3 className="text-lg font-bold text-base-content group-hover:text-primary transition-colors">{t('payInFull')}</h3>
-                <p className="text-xs text-base-content/50 mt-1">{t('payInFullDesc')}</p>
+          <div className="group relative rounded-[3rem] border border-white/5 bg-white/[0.02] p-1 overflow-hidden transition-all hover:border-white/10 shadow-2xl flex flex-col">
+            <div className="bg-white/[0.02] rounded-[2.8rem] p-10 h-full flex flex-col space-y-10">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">{t('payInFull')}</div>
+                <div className="text-xs text-white/20 font-medium uppercase tracking-widest">{t('payInFullDesc')}</div>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-base-content">{debtor.currency} {fullDebt.toLocaleString()}</span>
+              
+              <div className="flex items-baseline gap-2">
+                <span className="text-6xl font-black text-white">{debtor.currency} {fullDebt.toLocaleString()}</span>
               </div>
-              <ul className="space-y-3 text-xs text-base-content/60 flex-1">
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit1Full')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit2Full')}
-                </li>
+
+              <div className="h-px bg-white/5 w-full" />
+
+              <ul className="space-y-5 flex-1">
+                {[t('benefit1Full'), t('benefit2Full')].map((f, i) => (
+                  <li key={i} className="flex items-center gap-4 text-xs font-bold text-white/60 tracking-tight uppercase">
+                    <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                       <Check className="w-3 h-3 text-white/40" />
+                    </div>
+                    {f}
+                  </li>
+                ))}
               </ul>
-              <button onClick={() => handlePayment(fullDebt, 'Full Debt Payment')} className="btn btn-primary w-full rounded-xl border-none shadow-lg shadow-primary/20">
+
+              <button onClick={() => handlePayment(fullDebt, 'Full Debt Payment')} className="h-16 w-full rounded-2xl bg-white/[0.05] border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 group/btn">
                 {t('payFullButton')}
+                <ArrowRight className="w-4 h-4 ml-3 group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
 
-          {/* Lump Sum Settlement */}
-          <div className="card bg-base-200/80 border-2 border-primary shadow-[0_0_30px_rgba(59,130,246,0.15)] relative scale-105 z-10">
-            <div className="absolute top-0 right-0 bg-primary text-base-content text-[9px] font-extrabold px-3 py-1 rounded-bl-xl uppercase tracking-tighter">{t('recommended')}</div>
-            <div className="card-body p-8 space-y-6">
-              <div>
-                <h3 className="text-lg font-bold text-base-content">{t('lumpSum')}</h3>
-                <p className="text-xs text-base-content/60 mt-1">{t('lumpSumDesc')}</p>
+          {/* Lump Sum Settlement - Highlighted */}
+          <div className="group relative rounded-[3rem] border border-[#D4AF37]/30 bg-white/[0.02] p-1 overflow-hidden transition-all hover:border-[#D4AF37]/50 shadow-[0_0_50px_rgba(212,175,55,0.1)] flex flex-col scale-105 z-10">
+            <div className="absolute top-0 right-0 px-6 py-2 bg-[#D4AF37] text-black text-[10px] font-black uppercase tracking-widest rounded-bl-[2rem]">{t('recommended')}</div>
+            <div className="bg-white/[0.03] rounded-[2.8rem] p-10 h-full flex flex-col space-y-10">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em]">{t('lumpSum')}</div>
+                <div className="text-xs text-white/40 font-medium uppercase tracking-widest">{t('lumpSumDesc')}</div>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-base-content">{debtor.currency} {settlementAmount.toLocaleString()}</span>
-                <span className="text-xs text-base-content/50 line-through opacity-50">{fullDebt}</span>
+              
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl font-black text-white">{debtor.currency} {settlementAmount.toLocaleString()}</span>
+                </div>
+                <span className="text-xs font-bold text-white/20 line-through tracking-widest uppercase mt-2">{debtor.currency} {fullDebt}</span>
               </div>
-              <ul className="space-y-3 text-xs text-base-content/80 flex-1">
-                <li className="flex items-center gap-2 font-bold">
-                  <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit1Lump', { percent: savingPercent })}
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit2Lump')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit3Lump')}
-                </li>
+
+              <div className="h-px bg-white/5 w-full" />
+
+              <ul className="space-y-5 flex-1">
+                {[t('benefit1Lump', { percent: savingPercent }), t('benefit2Lump'), t('benefit3Lump')].map((f, i) => (
+                  <li key={i} className="flex items-center gap-4 text-xs font-bold text-white uppercase tracking-tight">
+                    <div className="w-5 h-5 rounded-full bg-[#D4AF37]/20 flex items-center justify-center border border-[#D4AF37]/30">
+                       <Check className="w-3 h-3 text-[#D4AF37]" />
+                    </div>
+                    {f}
+                  </li>
+                ))}
               </ul>
-              <button onClick={() => handlePayment(settlementAmount, 'One-time Settlement')} className="btn btn-primary w-full rounded-xl shadow-xl shadow-primary/30 border-none">
+
+              <button onClick={() => handlePayment(settlementAmount, 'One-time Settlement')} className="h-16 w-full rounded-2xl bg-white text-black font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center hover:bg-[#D4AF37] transition-all active:scale-95 shadow-2xl group/btn">
                 {t('acceptSettlement')}
+                <ArrowRight className="w-4 h-4 ml-3 group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
 
           {/* Installment Plan */}
-          <div className="card bg-base-200/50 border border-base-300 shadow-xl">
-            <div className="card-body p-8 space-y-6">
-              <div>
-                <h3 className="text-lg font-bold text-base-content">{t('installments')}</h3>
-                <p className="text-xs text-base-content/50 mt-1">{t('installmentsDesc')}</p>
+          <div className="group relative rounded-[3rem] border border-white/5 bg-white/[0.02] p-1 overflow-hidden transition-all hover:border-white/10 shadow-2xl flex flex-col">
+            <div className="bg-white/[0.02] rounded-[2.8rem] p-10 h-full flex flex-col space-y-10">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">{t('installments')}</div>
+                <div className="text-xs text-white/20 font-medium uppercase tracking-widest">{t('installmentsDesc')}</div>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-base-content">{debtor.currency} {(fullDebt / 3).toLocaleString()}</span>
-                <span className="text-xs text-base-content/50">{t('perMonth')}</span>
+              
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-black text-white">{debtor.currency} {(fullDebt / 3).toLocaleString()}</span>
+                <span className="text-xs font-bold text-white/20 uppercase tracking-widest">{t('perMonth')}</span>
               </div>
-              <ul className="space-y-3 text-xs text-base-content/60 flex-1">
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit1Install')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  {t('benefit2Install')}
-                </li>
+
+              <div className="h-px bg-white/5 w-full" />
+
+              <ul className="space-y-5 flex-1">
+                {[t('benefit1Install'), t('benefit2Install')].map((f, i) => (
+                  <li key={i} className="flex items-center gap-4 text-xs font-bold text-white/60 tracking-tight uppercase">
+                    <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                       <Check className="w-3 h-3 text-white/40" />
+                    </div>
+                    {f}
+                  </li>
+                ))}
               </ul>
-              <button onClick={() => handlePayment(fullDebt / 3, 'First Installment')} className="btn btn-accent btn-outline w-full rounded-xl">
+
+              <button onClick={() => handlePayment(fullDebt / 3, 'First Installment')} className="h-16 w-full rounded-2xl bg-white/[0.05] border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 group/btn">
                 {t('startInstallments')}
+                <ArrowRight className="w-4 h-4 ml-3 group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="bg-base-200/30 border border-base-300 rounded-2xl p-6 text-center">
-          <p className="text-xs text-base-content/50">
-            {t('disclaimer', { merchant: debtor.merchant.name })}
-          </p>
+        {/* Global Disclaimer */}
+        <div className="mt-32 p-12 rounded-[3rem] border border-white/5 bg-white/[0.02] max-w-4xl w-full text-center space-y-4">
+           <div className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em]">Protocol Disclosure</div>
+           <p className="text-white/40 text-sm font-medium tracking-tight leading-relaxed max-w-2xl mx-auto">
+             {t('disclaimer', { merchant: debtor.merchant.name })}
+           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

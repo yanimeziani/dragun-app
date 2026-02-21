@@ -65,21 +65,21 @@
     "perMonth": "/mois",
     "starter": {
       "name": "Démarrage",
-      "description": "Pour les petites entreprises",
+      "description": "Pour les pilotes de petites entreprises",
       "price": "0 $",
       "feature1": "Jusqu’à 5 débiteurs actifs",
-      "feature2": "Modèle IA standard",
-      "feature3": "Assistance par courriel",
-      "cta": "Commencer"
+      "feature2": "Frais de recouvrement de 5 %",
+      "feature3": "Assistance standard",
+      "cta": "Démarrer le pilote"
     },
     "pro": {
       "name": "Pro",
       "description": "Pour les gyms et studios en croissance",
       "price": "49 $",
       "feature1": "Débiteurs actifs illimités",
-      "feature2": "Gemini 2.0 Flash (Le plus rapide)",
+      "feature2": "Frais de recouvrement de 5 %",
       "feature3": "Assistance prioritaire",
-      "feature4": "Base de connaissances contractuelles",
+      "feature4": "Base de connaissances RAG complète",
       "cta": "Passer Pro"
     },
     "enterprise": {
