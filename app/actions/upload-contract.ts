@@ -27,8 +27,11 @@ export async function uploadContract(formData: FormData) {
       buffer[2] === 0x44 && buffer[3] === 0x46; 
     if (!isPdf) throw new Error('Only PDF files are accepted');
 
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const pdf = await getDocumentProxy(uint8Array);
+    // Create a copy of the buffer for extraction to prevent detachment issues
+    const extractionBuffer = new Uint8Array(buffer.length);
+    extractionBuffer.set(buffer);
+    
+    const pdf = await getDocumentProxy(extractionBuffer);
     const result = await extractText(pdf, { mergePages: true });
     
     // extractText might return text as string or array depending on mergePages option and version
